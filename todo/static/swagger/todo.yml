@@ -1,0 +1,173 @@
+openapi: 3.0.2
+info:
+  title: Flask ToDo api
+  version: 1.0.0
+servers:
+  - url: 'https://dev.com'
+    description: demo server
+
+
+
+
+
+
+paths:
+
+
+
+
+
+  "/todos":
+    get:
+      responses:
+        "200":
+          description: "Success result: List of todos"
+          content:
+            application/json:
+              schema:
+                properties:
+                    todos:
+                      type: array
+                      items:
+                        $ref: "#/components/schemas/OutputTodo"
+
+  "/todos/todo/{todo_id}":
+    get:
+      parameters:
+        - $ref: "#/components/parameters/todo_id"
+      responses:
+        "200":
+          description: "Retreive todo object"
+          content:
+            application/json:
+              schema:
+                properties:
+                  todo:
+                    $ref: "#/components/schemas/OutputTodo"
+              example:
+                id: 1
+                title: Wash dishes!
+                description: To wash dishes first buy washing liquid from market.
+
+  "/todos/todo/create/{todo_id}":
+    post:
+      requestBody:
+        description: Submitted text
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Todo"
+            example:
+              title: New title
+              description: New description 
+      responses:
+      "201":
+        description: "Creates todo object"
+        content:
+          application/json:
+            schema:
+              properties:
+                todo:
+                  $ref: "#/components/schemas/OutputTodo"
+            example:
+              id: 1
+              title: New title
+              description: New description
+
+  "/todos/todo/update/{todo_id}":
+    put:
+      parameters:
+        - $ref: "#/components/parameters/todo_id"
+      requestBody:
+        description: Submitted text
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Todo"
+            example:
+              title: New title
+              description: New description
+      responses:
+        "200":
+          description: "Retreive todo object"
+          content:
+            application/json:
+              schema:
+                properties:
+                  todo:
+                    $ref: "#/components/schemas/OutputTodo"
+              example:
+                id: 1
+                title: New title
+                description: New description
+
+  "/todos/todo/delete/{todo_id}":
+    delete:
+      parameters:
+        - $ref: "#/components/parameters/todo_id"
+      responses:
+        "200":
+          description: "Todo deleted"
+          content:
+            application/json:
+              schema:
+                properties:
+                  resonse_object:
+                    $ref: "#/components/schemas/SuccessResponse"
+
+
+
+
+                    
+components:
+  schemas:
+    Todo:
+      description: Todo object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    OutputTodo:
+      description:  Todo object for output
+      properties:
+        id:
+          type: integer
+      allOf:
+        - $ref: "#/components/schemas/Todo"
+
+
+
+    ErrorResponse:
+      description: "Error object"
+      properties:
+        message:
+          type: string
+        status_code:
+          type: integer
+      example:
+        message:  Could not created
+        status_code: 409
+
+    SuccessResponse:
+      description: "Succes object"
+      properties:
+        message:
+          type: string
+        status_code:
+          type: integer
+      example:
+        message:  Deleted
+        status_code: 200
+
+  parameters:
+    todo_id:
+      name: todo_id
+      in: path
+      required: true
+      description: "todo id"
+      schema:
+        type: integer

@@ -1,0 +1,42 @@
+version: '3.0'
+
+services:
+  api:
+    build: ./
+    depends_on:
+      - db
+    #entrypoint: /app/entrypoint.sh
+    environment:
+      STAGE: test
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://postgres:postgres@localhost/postgres
+    networks:
+      - db_nw
+      - web_nw
+    ports:
+      - "5000:5000"
+
+  db:
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    image: postgres:latest
+    container_name: postgresdb
+    networks:
+      - db_nw
+    ports:
+      - "54320:5432"
+
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge
+volumes:
+  pgdata:
+    driver: local
+  pgconf:
+    driver: local
+  pglog: 
+    driver: local
